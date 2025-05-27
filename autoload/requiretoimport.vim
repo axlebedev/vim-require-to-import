@@ -1,26 +1,25 @@
 vim9script
 
 export def RequireToImport()
-    var saveed_report = &report
-    &report = 10000
+    var view = winsaveview()
     silent! g/const .\+ = require/normal! 0ciwimport
     silent! g/const \_.\+ = require/normal! 0ciwimport
 
-    :%s/= require('\(.\+\)')/from '\1'/ge
+    silent! keeppatterns %s/= require('\(.\+\)')/from '\1'/ge
 
-    :%s/module.exports =/export default/ge
-    &report = saveed_report
+    silent! keeppatterns %s/module.exports =/export default/ge
+
+    winrestview(view)
 enddef
 
 export def ImportToRequire()
-    var saveed_report = &report
-    &report = 10000
-    :%s/import/const/ge
+    var view = winsaveview()
+    silent! keeppatterns :%s/import/const/ge
 
-    :%s/from '\(.\+\)'/= require('\1')/ge
+    silent! keeppatterns :%s/from '\(.\+\)'/= require('\1')/ge
 
-    :%s/export default/module.exports =/ge
-    &report = saveed_report
+    silent! keeppatterns :%s/export default/module.exports =/ge
+    winrestview(view)
 enddef
 
 command! RequireToImport RequireToImport()
